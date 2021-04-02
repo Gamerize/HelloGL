@@ -31,17 +31,17 @@ namespace MeshLoader
 
 	void LoadColours(ifstream& inFile, Mesh& mesh)
 	{
-		inFile >> mesh.ColorCount;
+		inFile >> mesh.NormalCount;
 
-		if (mesh.ColorCount > 0)
+		if (mesh.NormalCount > 0)
 		{
-			mesh.Colors = new Color[mesh.ColorCount];
+			mesh.Normals = new Vector3[mesh.NormalCount];
 
-			for (int i = 0; i < mesh.ColorCount; i++)
+			for (int i = 0; i < mesh.NormalCount; i++)
 			{
-				inFile >> mesh.Colors[i].r;
-				inFile >> mesh.Colors[i].g;
-				inFile >> mesh.Colors[i].b;
+				inFile >> mesh.Normals[i].x;
+				inFile >> mesh.Normals[i].y;
+				inFile >> mesh.Normals[i].z;
 			}
 		}
 	}

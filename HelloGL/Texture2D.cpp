@@ -12,7 +12,7 @@ Texture2D::Texture2D()
 
 Texture2D::~Texture2D()
 {
-	glDeleteTextures(1, &_ID);
+	glDeleteTextures;
 }
 
 bool Texture2D::Load(char* path, int width, int height)

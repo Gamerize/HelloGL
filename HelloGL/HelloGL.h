@@ -1,9 +1,5 @@
 #pragma once
 #define REFRESHRATE 16
-#include <Windows.h> //Required for OpenGL on Windows
-#include <gl/GL.h> //OpenGL
-#include <gl/GLU.h> //OpenGL Ultilities
-#include "GL\freeglut.h" //freeglut library
 #include "GLUTCallbacks.h"
 #include "Structures.h"
 #include "Cube.h"
@@ -28,12 +24,16 @@ public:
 
 	void InitObject();
 
+	void InitLight();
+
 	void InitGL(int argc, char* argv[]);
 
 private:
 	float rotation;
 
 	Camera* camera;
-	SceneObject* objects[1000];
+	SceneObject* objects[500];
+	Vector4* _lightPosition;
+	Lighting* _lightData;
 };
 

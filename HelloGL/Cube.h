@@ -21,6 +21,8 @@ private:
 	Vector3 _position;
 	Vector3 _rotate;
 
+	Material* _material;
+
 public:
 	Cube(Mesh* mesh, Texture2D* Texture, float x, float y, float z);
 	~Cube();
@@ -28,6 +30,7 @@ public:
 	void Draw();
 	void Update();
 	void SetRotation(float rotation);
+	void InitMaterial();
 
 	//static bool Load(char* path);
 };

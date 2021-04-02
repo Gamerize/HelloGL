@@ -7,6 +7,7 @@ HelloGL::HelloGL(int argc, char* argv[])
 	srand(time(NULL));
 	InitGL(argc, argv);
 	InitObject();
+	InitLight();
 	glutMainLoop();
 }
 
@@ -36,6 +37,8 @@ void HelloGL::InitGL(int argc, char* argv[])
 	glEnable(GL_TEXTURE_2D);// without this you will just gat white boxes
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 	glCullFace(GL_BACK);
 }
 
@@ -63,11 +66,34 @@ void HelloGL::InitObject()
 		objects[i] = new Cube(cubeMesh, texture, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
 			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
 	}
-	for (int i = 500; i < 1000; i++)
+	/*for (int i = 500; i < 1000; i++)
 	{
 		objects[i] = new Pyramid(PyramidMesh, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
 			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
-	}
+	}*/
+}
+
+void HelloGL::InitLight()
+{
+	_lightPosition = new Vector4();
+	_lightPosition->x = 0.0;
+	_lightPosition->y = 0.0;
+	_lightPosition->z = 1.0;
+	_lightPosition->w = 0.0;
+
+	_lightData = new Lighting();
+	_lightData->Ambient.x = 0.2;
+	_lightData->Ambient.y = 0.2;
+	_lightData->Ambient.z = 0.2;
+	_lightData->Ambient.w = 1.0;
+	_lightData->Diffuse.x = 0.8;
+	_lightData->Diffuse.y = 0.8;
+	_lightData->Diffuse.z = 0.8;
+	_lightData->Diffuse.w = 1.0;
+	_lightData->Specular.x = 0.2;
+	_lightData->Specular.y = 0.2;
+	_lightData->Specular.z = 0.2;
+	_lightData->Specular.w = 1.0;
 }
 
 HelloGL::~HelloGL(void)
@@ -79,7 +105,7 @@ void HelloGL::Display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //this clears the scene
 
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 500; i++)
 	{
 		objects[i]->Draw();
 	}
@@ -94,10 +120,13 @@ void HelloGL::Update()
 	glLoadIdentity();
 	gluLookAt(camera->eye.x, camera->eye.y, camera->eye.z, camera->center.x, camera->center.y, camera->center.z, camera->up.x, camera->up.y, camera->up.z);
 
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 500; i++)
 	{
 		objects[i]->Update();
 	}
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, &(_lightData->Ambient.x));
+	glLightfv(GL_LIGHT0, GL_POSITION, &(_lightPosition->x));
 
 	glutPostRedisplay();
 }
