@@ -21,6 +21,8 @@ Cube::Cube(Mesh* mesh, Texture2D* Texture, float x, float y, float z) : SceneObj
 
 Cube::~Cube()
 {
+	delete _material;
+	_material = nullptr;
 }
 
 void Cube::Draw()
@@ -28,7 +30,7 @@ void Cube::Draw()
 	if (_mesh->Vertices != nullptr && _mesh->Normals != nullptr && _mesh->Indices != nullptr)
 	{
 		glBindTexture(GL_TEXTURE_2D, _texture->GetID());
-		glEnable(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, _mesh->Vertices);
@@ -47,6 +49,7 @@ void Cube::Draw()
 
 		glDisableClientState(GL_VERTEX_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
 	}
 }
 

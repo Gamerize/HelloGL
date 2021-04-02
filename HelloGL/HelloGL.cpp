@@ -61,7 +61,7 @@ void HelloGL::InitObject()
 	camera->up.y = 1.0f;
 	camera->up.z = 0.0f;
 
-	for (int i = 0; i < 500; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		objects[i] = new Cube(cubeMesh, texture, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
 			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
@@ -99,13 +99,23 @@ void HelloGL::InitLight()
 HelloGL::~HelloGL(void)
 {
 	delete camera;
+	camera = nullptr;
+	for (int i = 0; i < 10; i++)
+	{
+		delete objects[i];
+		objects[i] = nullptr;
+	}
+	delete _lightData;
+	_lightData = nullptr;
+	delete _lightPosition;
+	_lightPosition = nullptr;
 }
 
 void HelloGL::Display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //this clears the scene
 
-	for (int i = 0; i < 500; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		objects[i]->Draw();
 	}
@@ -120,7 +130,7 @@ void HelloGL::Update()
 	glLoadIdentity();
 	gluLookAt(camera->eye.x, camera->eye.y, camera->eye.z, camera->center.x, camera->center.y, camera->center.z, camera->up.x, camera->up.y, camera->up.z);
 
-	for (int i = 0; i < 500; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		objects[i]->Update();
 	}

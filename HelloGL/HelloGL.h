@@ -3,7 +3,6 @@
 #include "GLUTCallbacks.h"
 #include "Structures.h"
 #include "Cube.h"
-#include "Pyramid.h"
 #include "MeshLoader.h"
 
 class HelloGL
