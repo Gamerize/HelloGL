@@ -7,7 +7,7 @@ HelloGL::HelloGL(int argc, char* argv[])
 	srand(time(NULL));
 	InitGL(argc, argv);
 	InitObject();
-	InitLight();
+	InitLighting();
 	glutMainLoop();
 }
 
@@ -42,38 +42,7 @@ void HelloGL::InitGL(int argc, char* argv[])
 	glCullFace(GL_BACK);
 }
 
-void HelloGL::InitObject()
-{
-	Mesh* cubeMesh = MeshLoader::Load((char*)"cube.txt");
-	Mesh* PyramidMesh = MeshLoader::Load((char*)"pyramid.txt");
-
-	Texture2D* texture = new Texture2D();
-	texture->Load((char*)"penguins.raw", 512, 512);
-
-	camera = new Camera();
-	camera->eye.x = 0.0f;
-	camera->eye.y = 0.0f;
-	camera->eye.z = 1.0f;
-	camera->center.x = 0.0f;
-	camera->center.y = 0.0f;
-	camera->center.z = 0.0f;
-	camera->up.x = 0.0f;
-	camera->up.y = 1.0f;
-	camera->up.z = 0.0f;
-
-	for (int i = 0; i < 100; i++)
-	{
-		objects[i] = new Cube(cubeMesh, texture, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
-			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
-	}
-	/*for (int i = 500; i < 1000; i++)
-	{
-		objects[i] = new Pyramid(PyramidMesh, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
-			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
-	}*/
-}
-
-void HelloGL::InitLight()
+void HelloGL::InitLighting()
 {
 	_lightPosition = new Vector4();
 	_lightPosition->x = 0.0;
@@ -96,26 +65,49 @@ void HelloGL::InitLight()
 	_lightData->Specular.w = 1.0;
 }
 
+void HelloGL::InitObject()
+{
+	Mesh* cubeMesh = MeshLoader::Load((char*)"cube.txt");
+	Mesh* PyramidMesh = MeshLoader::Load((char*)"pyramid.txt");
+
+	Texture2D* texture = new Texture2D();
+	texture->Load((char*)"penguins.raw", 512, 512);
+
+	camera = new Camera();
+	camera->eye.x = 0.0f;
+	camera->eye.y = 0.0f;
+	camera->eye.z = 1.0f;
+	camera->center.x = 0.0f;
+	camera->center.y = 0.0f;
+	camera->center.z = 0.0f;
+	camera->up.x = 0.0f;
+	camera->up.y = 1.0f;
+	camera->up.z = 0.0f;
+
+
+
+	for (int i = 0; i < 10; i++)
+	{
+		objects[i] = new Cube(cubeMesh, texture, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
+			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
+	}
+	/*for (int i = 500; i < 1000; i++)
+	{
+		objects[i] = new Pyramid(PyramidMesh, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
+			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
+	}*/
+}
+
 HelloGL::~HelloGL(void)
 {
 	delete camera;
-	camera = nullptr;
-	for (int i = 0; i < 10; i++)
-	{
-		delete objects[i];
-		objects[i] = nullptr;
-	}
-	delete _lightData;
-	_lightData = nullptr;
-	delete _lightPosition;
-	_lightPosition = nullptr;
 }
 
 void HelloGL::Display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //this clears the scene
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		objects[i]->Draw();
 	}
@@ -130,13 +122,13 @@ void HelloGL::Update()
 	glLoadIdentity();
 	gluLookAt(camera->eye.x, camera->eye.y, camera->eye.z, camera->center.x, camera->center.y, camera->center.z, camera->up.x, camera->up.y, camera->up.z);
 
-	for (int i = 0; i < 100; i++)
+	glLightfv(GL_LIGHT0, GL_AMBIENT, &(_lightData->Ambient.x));
+	glLightfv(GL_LIGHT0, GL_POSITION, &(_lightPosition->x));
+
+	for (int i = 0; i < 10; i++)
 	{
 		objects[i]->Update();
 	}
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, &(_lightData->Ambient.x));
-	glLightfv(GL_LIGHT0, GL_POSITION, &(_lightPosition->x));
 
 	glutPostRedisplay();
 }
