@@ -10,7 +10,7 @@ int Cube::numVertices = 0;
 int Cube::numColors = 0;
 int Cube::numIndices = 0;
 
-Cube::Cube(Mesh* mesh, Texture2D* Texture, float x, float y, float z) : SceneObject(mesh, Texture)
+Cube::Cube(Obj* obj, Texture2D* Texture, float x, float y, float z) : SceneObject(obj, Texture)
 {
 	_rotation = 0.0f;
 	_position.x = x;
@@ -27,30 +27,34 @@ Cube::~Cube()
 
 void Cube::Draw()
 {
-	if (_mesh->Vertices != nullptr && _mesh->Normals != nullptr && _mesh->Indices != nullptr)
+	glBindTexture(GL_TEXTURE_2D, _texture->GetID());
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, &_obj->vertices);
+	glNormalPointer(GL_FLOAT, 0, &_obj->Normals);
+	glTexCoordPointer(2, GL_FLOAT, 0, &_obj->TexCoord);
+
+	/*InitMaterial();
+	glMaterialfv(GL_FRONT, GL_AMBIENT, &(_material->Ambient.x));
+	glMaterialf(GL_FRONT, GL_SHININESS, _material->Shininess);*/
+
+	glPushMatrix();
+	glTranslatef(_position.x, _position.y, _position.z);
+	glRotatef(_rotation, 0.0f, 0.1f, 0.0f);
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < _obj->faceCount; i++)
 	{
-		glBindTexture(GL_TEXTURE_2D, _texture->GetID());
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, _mesh->Vertices);
-		glNormalPointer(GL_FLOAT, 0, _mesh->Normals);
-		glTexCoordPointer(2, GL_FLOAT, 0, _mesh->TexCoords);
-
-		InitMaterial();
-		glMaterialfv(GL_FRONT, GL_AMBIENT, &(_material->Ambient.x));
-		glMaterialf(GL_FRONT, GL_SHININESS, _material->Shininess);
-
-		glPushMatrix();
-		glTranslatef(_position.x, _position.y, _position.z);
-		glRotatef(_rotation, 0.0f, 0.0f, 0.1f);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, _mesh->Indices);
-		glPopMatrix();
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
+		glTexCoord2f(_obj->TexCoord[_obj->TexIndices[i]].u, _obj->TexCoord[_obj->TexIndices[i]].v);
+		glNormal3f(_obj->Normals[_obj->NorIndices[i]].x, _obj->Normals[_obj->NorIndices[i]].y, _obj->Normals[_obj->NorIndices[i]].z);
+		glVertex3f(_obj->vertices[_obj->VerIndices[i]].x, _obj->vertices[_obj->VerIndices[i]].y, _obj->vertices[_obj->VerIndices[i]].z);
 	}
+	glEnd();
+	glPopMatrix();
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void Cube::Update()

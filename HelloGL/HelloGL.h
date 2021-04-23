@@ -8,6 +8,7 @@
 #include "Structures.h"
 #include "Cube.h"
 #include "MeshLoader.h"
+#include "ObjectLoader.h"
 
 class HelloGL
 {
@@ -36,6 +37,12 @@ private:
 
 	Camera* camera;
 	SceneObject* objects[100];
+	SceneObject* Crystal[5];
+	SceneObject* Platform;
+	SceneObject* Tip;
+	SceneObject* MainPillar;
+	SceneObject* Ring;
+	SceneObject* Pillar[4];
 	Vector4* _lightPosition;
 	Lighting* _lightData;
 };

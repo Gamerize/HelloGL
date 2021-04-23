@@ -3,6 +3,7 @@
 #include <gl/GL.h> //OpenGL
 #include <gl/GLU.h> //OpenGL Ultilities
 #include "GL\freeglut.h" //freeglut library
+#include <vector>
 
 struct Vector3
 {
@@ -42,6 +43,15 @@ struct Mesh
 	GLushort* Indices;
 	int VertexCount, NormalCount, IndexCount, TexCoordCount;
 	TexCoord* TexCoords;
+};
+
+struct Obj
+{
+	std::vector<Vertex> vertices;
+	std::vector<Vector3> Normals;
+	std::vector<TexCoord> TexCoord;
+	std::vector<GLushort> VerIndices, NorIndices, TexIndices;
+	int faceCount, verCount, norCount, texCount;
 };
 
 struct Vector4

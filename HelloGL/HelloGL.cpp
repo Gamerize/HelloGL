@@ -6,8 +6,8 @@ HelloGL::HelloGL(int argc, char* argv[])
 {
 	srand(time(NULL));
 	InitGL(argc, argv);
-	InitObject();
 	InitLighting();
+	InitObject();
 	glutMainLoop();
 }
 
@@ -23,13 +23,13 @@ void HelloGL::InitGL(int argc, char* argv[])
 	glutKeyboardFunc(GLUTCallbacks::Keyboard);
 	glutTimerFunc(REFRESHRATE, GLUTCallbacks::Timer, REFRESHRATE);
 
-	glDepthFunc(GL_ALWAYS);
+	glDepthFunc(GL_LESS);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//Set the viewport to be the entire window
 	glViewport(0, 0, 800, 800);
 	//Set the correct perspective
-	gluPerspective(45, 1, 0, 1000);
+	gluPerspective(45, 1, 1, 1000);
 
 	glMatrixMode(GL_MODELVIEW);
 	rotation = 0.0f;
@@ -45,10 +45,10 @@ void HelloGL::InitGL(int argc, char* argv[])
 void HelloGL::InitLighting()
 {
 	_lightPosition = new Vector4();
-	_lightPosition->x = 0.0;
-	_lightPosition->y = 0.0;
-	_lightPosition->z = 1.0;
-	_lightPosition->w = 0.0;
+	_lightPosition->x = -1.0;
+	_lightPosition->y = 5.0;
+	_lightPosition->z = -2.0;
+	_lightPosition->w = 10.0;
 
 	_lightData = new Lighting();
 	_lightData->Ambient.x = 0.2;
@@ -58,20 +58,34 @@ void HelloGL::InitLighting()
 	_lightData->Diffuse.x = 0.8;
 	_lightData->Diffuse.y = 0.8;
 	_lightData->Diffuse.z = 0.8;
-	_lightData->Diffuse.w = 1.0;
-	_lightData->Specular.x = 0.2;
-	_lightData->Specular.y = 0.2;
-	_lightData->Specular.z = 0.2;
+	_lightData->Diffuse.w = 2.0;
+	_lightData->Specular.x = 0.6;
+	_lightData->Specular.y = 0.6;
+	_lightData->Specular.z = 0.6;
 	_lightData->Specular.w = 1.0;
 }
 
 void HelloGL::InitObject()
 {
-	Mesh* cubeMesh = MeshLoader::Load((char*)"cube.txt");
-	Mesh* PyramidMesh = MeshLoader::Load((char*)"pyramid.txt");
+	/*Mesh* cubeMesh = MeshLoader::Load((char*)"cube.txt");
+	Mesh* PyramidMesh = MeshLoader::Load((char*)"pyramid.txt");*/
+	Obj* CrystalObj = ObjectLoader::Load((char*)"Objects/Crystal.obj");
+	Obj* PlatformObj = ObjectLoader::Load((char*)"Objects/Platform.obj");
+	Obj* TipObj = ObjectLoader::Load((char*)"Objects/Tip.obj");
+	Obj* MainPillarObj = ObjectLoader::Load((char*)"Objects/MainPillar.obj");
+	Obj* RingObj = ObjectLoader::Load((char*)"Objects/Ring.obj");
+	Obj* PillarObj = ObjectLoader::Load((char*)"Objects/pillar.obj");
 
-	Texture2D* texture = new Texture2D();
-	texture->Load((char*)"penguins.raw", 512, 512);
+	Texture2D* crystalTexture = new Texture2D();
+	crystalTexture->Load((char*)"Textures/greco_scritto_marble_basecolor.raw", 4096, 4096);
+	Texture2D* PlatformTexture = new Texture2D();
+	PlatformTexture->Load((char*)"Textures/brick_floor_003_diffuse_4k.raw", 4096, 4096);
+	Texture2D* MainPillarTexture = new Texture2D();
+	MainPillarTexture->Load((char*)"Textures/rough_plaster_broken_diff_4k.raw", 4096, 4096);
+	Texture2D* RingTexture = new Texture2D();
+	RingTexture->Load((char*)"Textures/factory_wall_diff_4k.raw", 4096, 4096);
+	Texture2D* PillarTexture = new Texture2D();
+	PillarTexture->Load((char*)"Textures/cobblestone_floor_04_diff_4k.raw", 4096, 4096);
 
 	camera = new Camera();
 	camera->eye.x = 0.0f;
@@ -84,13 +98,29 @@ void HelloGL::InitObject()
 	camera->up.y = 1.0f;
 	camera->up.z = 0.0f;
 
+	/*for (int i = 0; i < 5; i++)
+	{
 
+	}*/
+	Crystal[0] = new Cube(CrystalObj, crystalTexture, 0, 1, -10);
+	Crystal[1] = new Cube(CrystalObj, crystalTexture, 6, -2, -15);
+	Crystal[2] = new Cube(CrystalObj, crystalTexture, 6, -2, -5);
+	Crystal[3] = new Cube(CrystalObj, crystalTexture, -5, -2, -15);
+	Crystal[4] = new Cube(CrystalObj, crystalTexture, -5, -2, -5);
+	Platform = new Cube(PlatformObj, PlatformTexture, 0, -6, -10);
+	Tip = new Cube(TipObj, MainPillarTexture, 0, -7, -10);
+	MainPillar = new Cube(MainPillarObj, MainPillarTexture, 0, -7, -10);
+	Pillar[0] = new Cube(PillarObj, PillarTexture, 0, -6, -10);
+	Pillar[1] = new Cube(PillarObj, PillarTexture, 11, -6, -10);
+	Pillar[2] = new Cube(PillarObj, PillarTexture, 11, -6, -20);
+	Pillar[3] = new Cube(PillarObj, PillarTexture, 0, -6, -20);
+	Ring = new Cube(RingObj, RingTexture, 0, -7, -10);
 
-	for (int i = 0; i < 10; i++)
+	/*for (int i = 0; i < 1; i++)
 	{
 		objects[i] = new Cube(cubeMesh, texture, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
 			10.0f) - 10.0f, -(rand() % 1000) / 10.0f);
-	}
+	}*/
 	/*for (int i = 500; i < 1000; i++)
 	{
 		objects[i] = new Pyramid(PyramidMesh, ((rand() % 400) / 10.0f) - 20.0f, ((rand() % 200) /
@@ -107,10 +137,23 @@ void HelloGL::Display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //this clears the scene
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 5; i++)
+	{
+		Crystal[i]->Draw();
+	}
+	Platform->Draw();
+	Tip->Draw();
+	MainPillar->Draw();
+	for (int i = 0; i < 4; i++)
+	{
+		Pillar[i]->Draw();
+	}
+	Ring->Draw();
+
+	/*for (int i = 0; i < 100; i++)
 	{
 		objects[i]->Draw();
-	}
+	}*/
 
 	glFlush(); //flushes the scene drawn to the graphics card
 
@@ -123,11 +166,15 @@ void HelloGL::Update()
 	gluLookAt(camera->eye.x, camera->eye.y, camera->eye.z, camera->center.x, camera->center.y, camera->center.z, camera->up.x, camera->up.y, camera->up.z);
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, &(_lightData->Ambient.x));
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, &(_lightData->Diffuse.x));
+	glLightfv(GL_LIGHT0, GL_SPECULAR, &(_lightData->Specular.x));
 	glLightfv(GL_LIGHT0, GL_POSITION, &(_lightPosition->x));
 
-	for (int i = 0; i < 10; i++)
+	Ring->Update();
+
+	for (int i = 0; i < 5; i++)
 	{
-		objects[i]->Update();
+		Crystal[i]->Update();
 	}
 
 	glutPostRedisplay();
@@ -137,14 +184,41 @@ void HelloGL::Keyboard(unsigned char key, int x, int y)
 {
 		if (key == 'w')
 		{
-			camera->eye.z -= 0.8f;
-			camera->center.z -= 0.8f;
+			camera->eye.z -= 0.1f;
+			camera->center.z -= 0.1f;
 		}
 		if (key == 's')
 		{
-			camera->eye.z += 0.8f;
-			camera->center.z += 0.8f;
+			camera->eye.z += 0.1f;
+			camera->center.z += 0.1f;
 		}
+		if (key == 'd')
+		{
+			camera->eye.x += 0.1f;
+			camera->center.x += 0.1f;
+		}
+		if (key == 'a')
+		{
+			camera->eye.x -= 0.1f;
+			camera->center.x -= 0.1f;
+		}
+		if (key == 'W')
+		{
+			camera->eye.y += 0.1f;
+		}
+		if (key == 'S')
+		{
+			camera->eye.y -= 0.1f;
+		}
+		if (key == 'A')
+		{
+			camera->eye.x += 0.1f;
+		}
+		if (key == 'D')
+		{
+			camera->eye.x -= 0.1f;
+		}
+
 }
 
 

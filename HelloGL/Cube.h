@@ -24,7 +24,7 @@ private:
 	Material* _material;
 
 public:
-	Cube(Mesh* mesh, Texture2D* Texture, float x, float y, float z);
+	Cube(Obj* obj, Texture2D* Texture, float x, float y, float z);
 	~Cube();
 
 	void Draw();
