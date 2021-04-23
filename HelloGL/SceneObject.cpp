@@ -1,13 +1,17 @@
 #include "SceneObject.h"
 
-SceneObject::SceneObject(Mesh* mesh, Texture2D* Texture)
+SceneObject::SceneObject(Obj* obj, Texture2D* Texture)
 {
-	_mesh = mesh;
+	_obj = obj;
 	_texture = Texture;
 }
 
 SceneObject::~SceneObject()
 {
+	delete _obj;
+	_obj = nullptr;
+	delete _texture;
+	_texture = nullptr;
 }
 
 void SceneObject::Update()

@@ -7,8 +7,8 @@
 #include "GLUTCallbacks.h"
 #include "Structures.h"
 #include "Cube.h"
-#include "Pyramid.h"
 #include "MeshLoader.h"
+#include "ObjectLoader.h"
 
 class HelloGL
 {
@@ -30,10 +30,20 @@ public:
 
 	void InitGL(int argc, char* argv[]);
 
+	void InitLighting();
+
 private:
 	float rotation;
 
 	Camera* camera;
-	SceneObject* objects[1000];
+	SceneObject* objects[100];
+	SceneObject* Crystal[5];
+	SceneObject* Platform;
+	SceneObject* Tip;
+	SceneObject* MainPillar;
+	SceneObject* Ring;
+	SceneObject* Pillar[4];
+	Vector4* _lightPosition;
+	Lighting* _lightData;
 };
 
